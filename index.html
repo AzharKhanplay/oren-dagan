@@ -1,0 +1,218 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule a Meeting</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <style>
+      body{
+        font-family: 'Jost', sans-serif;
+        background-color: #2c3269;
+        font-size: 16px;
+        overflow-x: hidden;
+      }
+      button{
+        font-family: 'Jost', sans-serif;
+      }
+      .container{
+        width: 100%;
+        max-width: 1140px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      .text-center{
+        text-align: center;
+      }
+
+      .meet_{
+        padding: 100px 0;
+      }
+      .meet_ h1{
+        font-size: 3rem;
+        color: #FFF;
+      }
+      .meeting_btns{
+        margin-top: 40px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+      }
+      .meet-btn{
+        display: inline-block;
+        font-size: 1.3rem;
+        color: #FFF;
+        background-color: #493aff;
+        padding: 10px 30px;
+        border: 0;
+        font-weight: 500;
+        border-radius: 4px;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        transition: all ease-in .4s;
+      }
+      .meet-btn:hover,
+      .meet-btn.active{
+        background-color: #FFF;
+        color: #493aff;
+      }
+
+      .meet_frames_wrapper{
+        padding: 20px;
+      }
+.in_person_meet_locations h3{
+   margin-top: 50px;
+   font-size: 1.5rem;
+   color: #FFF;
+   margin-bottom: 0;
+}
+.location-selector {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 20px;
+  gap: 10px;
+  justify-content: center;
+}
+
+.location-option {
+  position: relative;
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #FFF;
+  background-color: #493aff;
+  padding: 10px 30px 10px 15px;
+  border: 0;
+  font-weight: 500;
+  border-radius: 4px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+}
+
+.location-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+}
+
+.checkmark {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: #fff;
+  border: 2px solid #000;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.location-option input[type="radio"]:checked + .checkmark::after {
+  content: '\2713';
+  font-size: 22px;
+  color: #493aff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+}
+
+@media screen and (max-width: 600px){
+    .meet_ h1{
+        font-size: 2.5rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<section class="meet_">
+  <div class="container">
+    <h1 class="text-center">Schedule a Meeting</h1>
+    <div class="meeting_btns text-center">
+      <button type="button" class="meet-btn" data-target="zoom_meet">Zoom Meeting</button>
+      <button type="button" class="meet-btn" data-target="in_person_meet">In-person Meeting</button>
+    </div>
+    <div class="in_person_meet_locations" id="in_person_meet" style="display: none;">
+      <h3 class="text-center">Select a Location</h3>
+      <div class="location-selector">
+      <label class="location-option">
+       <input type="radio" name="in_person_location" value="https://oren-dagan.zohobookings.com/portal-embed#/sodfl"> 
+       <span class="checkmark"></span>
+       Florida
+      </label>
+      <label class="location-option">
+       <input type="radio" name="in_person_location" value="https://oren-dagan.zohobookings.com/portal-embed#/sodsj"> 
+       <span class="checkmark"></span>
+       San Jose
+      </label>
+      <label class="location-option">
+       <input type="radio" name="in_person_location" value="https://oren-dagan.zohobookings.com/portal-embed#/sodzoom"> 
+       <span class="checkmark"></span>
+       LA
+      </label>
+      </div>
+    </div>
+    <div class="meet_frames_wrapper">
+      <div class="meet_iframe" id="meet_frame"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+const zoom_meet_frame_src = 'https://oren-dagan.zohobookings.com/portal-embed#/sodzoom';
+const meetBtn = document.querySelectorAll('.meet-btn');
+const meetFrame = document.getElementById('meet_frame');
+const in_person_meet = document.getElementById('in_person_meet');
+
+meetBtn.forEach(function(btn){
+  btn.addEventListener('click', function(){
+    const target = this.getAttribute('data-target');
+    const isActive = this.classList.contains('active');
+
+    if(!isActive){
+     document.querySelectorAll('.meet-btn').forEach(function(btn){
+      btn.classList.remove('active')
+     });
+     this.classList.add('active');
+     
+     if(target == 'zoom_meet'){
+        in_person_meet.style.display = 'none';
+        openIframe(zoom_meet_frame_src, meetFrame);
+     }else{
+      //alert('in person');
+      meetFrame.innerHTML = '';
+      in_person_meet.style.display = 'block';
+     }
+    }
+  });
+});
+
+const locationOptions = document.querySelectorAll('.location-option input[type="radio"]');
+
+locationOptions.forEach(function(option){
+  option.addEventListener('click', function(){
+    var selectedLocation = this.value;
+    openIframe(selectedLocation, meetFrame);
+  });
+});
+
+function openIframe(src, target){
+ target.innerHTML = '';
+ const iframe = document.createElement('iframe');
+ iframe.width = '100%';
+ iframe.height = '750px';
+ iframe.src = src;
+ iframe.frameBorder = '0';
+ 
+ target.appendChild(iframe);
+}
+</script>
+    
+</body>
+</html>
